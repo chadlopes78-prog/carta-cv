@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #f7f4ee;
+  --color-cream: #fffdf8;
+  --color-ink: #1a1916;
+  --color-muted: #6f6b64;
+  --color-faint: #9a958c;
+  --color-line: #e4dfd6;
+  --color-forest: #1f5c45;
+  --color-forest-dark: #164533;
+  --color-forest-soft: #e7f0eb;
+  --color-danger: #9f3a2f;
+  --font-sans: "Figtree", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --font-cv-sans: "Figtree", "Segoe UI", sans-serif;
+  --font-cv-serif: "Fraunces", Georgia, serif;
+  --font-cv-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 1rem;
+  --shadow-card: 0 0 0 1px rgba(26, 25, 22, 0.06), 0 1px 2px rgba(26, 25, 22, 0.04),
+    0 8px 24px rgba(26, 25, 22, 0.04);
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: var(--color-paper);
+    color: var(--color-ink);
+  }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+}
+
+@media print {
+  body {
+    background: white;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .cv-page {
+    box-shadow: none !important;
+    margin: 0 !important;
+  }
+}
