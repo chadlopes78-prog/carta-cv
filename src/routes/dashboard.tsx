@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Copy, Eye, Pencil, Plus, Trash2 } from "lucide-react";
+import { Copy, Download, Eye, Pencil, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/layout/app-shell";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,6 @@ function Dashboard() {
   const [cvs, setCvs] = useState<ResumeRecord[] | null>(null);
   const [error, setError] = useState("");
   const first = user?.displayName?.split(" ")[0] || user?.primaryEmail?.split("@")[0];
-
 
   async function refresh() {
     try {
@@ -67,7 +66,10 @@ function Dashboard() {
                     <Pencil className="size-4" /> Editar
                   </Button>
                   <Button size="sm" variant="outline" className="w-full sm:w-auto" onClick={() => navigate({ to: "/cv/$id", params: { id: cv.id } })}>
-                    <Eye className="size-4" /> Pré-visualizar
+                    <Eye className="size-4" /> Ver
+                  </Button>
+                  <Button size="sm" variant="outline" className="w-full sm:w-auto" onClick={() => navigate({ to: "/cv/$id", params: { id: cv.id } })}>
+                    <Download className="size-4" /> PDF
                   </Button>
                   <Button
                     size="sm"
@@ -101,5 +103,3 @@ function Dashboard() {
     </AppShell>
   );
 }
-
-
