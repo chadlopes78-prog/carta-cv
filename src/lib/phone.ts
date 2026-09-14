@@ -68,14 +68,20 @@ export function passwordError(password: string, confirm?: string): string | null
 
 export function mapAuthError(message: string): string {
   const m = message.toLowerCase();
+  if (m.includes("no account") || m.includes("não tens conta") || m.includes("user not found")) {
+    return "Não tens conta. Clica em Criar conta.";
+  }
   if (m.includes("already") || m.includes("exist") || m.includes("registered")) {
     return "Já existe uma conta com estes dados. Entra ou recupera a palavra-passe.";
   }
   if (m.includes("invalid password") || m.includes("invalid email or password") || m.includes("invalid credentials")) {
-    return "Email, número ou palavra-passe incorrectos.";
+    return "Email, número ou palavra-passe incorrectos. Se ainda não tens conta, clica em Criar conta.";
   }
   if (m.includes("invalid email")) return "Indica um email válido.";
   if (m.includes("password") && m.includes("short")) return "A palavra-passe deve ter pelo menos 8 caracteres.";
   if (m.includes("unauthorized")) return "A sessão expirou. Entra novamente.";
+  if (m.includes("failed") || m.includes("500") || m.includes("internal") || m.includes("fetch")) {
+    return "Não foi possível criar ou entrar na conta. Tenta de novo ou fala connosco no WhatsApp.";
+  }
   return message || "Não foi possível concluir. Tenta novamente.";
 }
