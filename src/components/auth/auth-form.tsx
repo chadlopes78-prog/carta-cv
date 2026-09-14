@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { authClient } from "@/lib/auth/client";
-import { checkPhoneAvailable, recordLogin, syncMyProfile } from "@/lib/account/server";
+import { accountExists, checkPhoneAvailable, recordLogin, syncMyProfile } from "@/lib/account/server";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { APP_NAME, SUPPORT_WHATSAPP_URL } from "@/lib/config";
@@ -69,7 +69,15 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
             password,
             callbackURL: "/dashboard",
           });
-          if (err) throw new Error(err.message || "Email ou palavra-passe incorrectos.");
+          if (err) {
+            try {
+              const found = await accountExists({ data: { email: trimmed } });
+              if (!found.exists) throw new Error("Não tens conta. Clica em Criar conta.");
+            } catch (lookupErr) {
+              if (lookupErr instanceof Error && lookupErr.message.includes("Não tens conta")) throw lookupErr;
+            }
+            throw new Error(err.message || "Email ou palavra-passe incorrectos.");
+          }
           await afterAuth({ email: trimmed, loginMethod: "email" });
         }
         return;
@@ -99,7 +107,15 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           password,
           callbackURL: "/dashboard",
         });
-        if (err) throw new Error("Número ou palavra-passe incorrectos.");
+        if (err) {
+          try {
+            const found = await accountExists({ data: { email: authEmail } });
+            if (!found.exists) throw new Error("Não tens conta. Clica em Criar conta.");
+          } catch (lookupErr) {
+            if (lookupErr instanceof Error && lookupErr.message.includes("Não tens conta")) throw lookupErr;
+          }
+          throw new Error("Número ou palavra-passe incorrectos. Se ainda não tens conta, clica em Criar conta.");
+        }
         await afterAuth({ phone: e164, countryCode, loginMethod: "phone" });
       }
     } catch (err) {
@@ -120,6 +136,15 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
       <p className="mt-2 text-sm text-muted">
         {mode === "signup" ? "Usa o teu email ou o teu número de telefone." : "Continua os teus CVs onde paraste."}
       </p>
+      {mode === "login" && (
+        <p className="mt-3 rounded-md bg-paper px-3 py-2 text-sm text-ink ring-1 ring-line">
+          Ainda não tens conta?{" "}
+          <Link to="/criar-conta" className="font-medium text-forest underline-offset-4 hover:underline">
+            Clica em criar conta
+          </Link>
+          .
+        </p>
+      )}
 
       <div className="mt-6 grid grid-cols-2 rounded-md bg-paper p-1 ring-1 ring-line">
         <button
@@ -237,9 +262,9 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           </>
         ) : (
           <>
-            Ainda não tens conta?{" "}
-            <Link to="/criar-conta" className="text-ink underline-offset-4 hover:underline">
-              Criar conta
+            Não tens conta?{" "}
+            <Link to="/criar-conta" className="font-medium text-forest underline-offset-4 hover:underline">
+              Clica aqui para criar conta
             </Link>
           </>
         )}
